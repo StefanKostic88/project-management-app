@@ -130,7 +130,15 @@ const mutation = new GraphQLObjectType({
       },
     },
 
-    deleteProject: {},
+    deleteProject: {
+      type: ProjectType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parent, args) {
+        return Project.findByIdAndDelete(args.id);
+      },
+    },
   },
 });
 
