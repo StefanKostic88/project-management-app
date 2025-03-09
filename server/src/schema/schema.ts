@@ -1,20 +1,17 @@
-// const { projects, clients } = require("../sampleData");
-
-const Client = require("../models/Client");
-const Project = require("../models/Project");
-
-const {
-  GraphQLObjectType,
+import {
+  GraphQLEnumType,
   GraphQLID,
-  GraphQLString,
-  GraphQLSchema,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLEnumType,
-} = require("graphql");
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} from "graphql";
+import { SchmaTypeNamesForProject } from "../schemaTpes";
+import { Client, Project } from "../models";
 
 const ClientType = new GraphQLObjectType({
-  name: "Client",
+  name: SchmaTypeNamesForProject.client,
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
@@ -24,7 +21,7 @@ const ClientType = new GraphQLObjectType({
 });
 
 const ProjectType = new GraphQLObjectType({
-  name: "Project",
+  name: SchmaTypeNamesForProject.project,
   fields: () => ({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
@@ -33,7 +30,6 @@ const ProjectType = new GraphQLObjectType({
     client: {
       type: ClientType,
       resolve(parent, args) {
-        console.log(parent);
         return Client.findById(parent.clientId);
       },
     },
@@ -41,8 +37,7 @@ const ProjectType = new GraphQLObjectType({
 });
 
 const RootQuery = new GraphQLObjectType({
-  // Queries
-  name: "RootQueryType",
+  name: SchmaTypeNamesForProject.rootQueryType,
   fields: {
     projects: {
       type: new GraphQLList(ProjectType),
@@ -50,7 +45,6 @@ const RootQuery = new GraphQLObjectType({
         return Project.find();
       },
     },
-
     project: {
       type: ProjectType,
       args: { id: { type: GraphQLID } },
@@ -58,14 +52,12 @@ const RootQuery = new GraphQLObjectType({
         return Project.findById(args.id);
       },
     },
-
     clients: {
       type: new GraphQLList(ClientType),
       resolve(parent, args) {
         return Client.find();
       },
     },
-
     client: {
       type: ClientType,
       args: { id: { type: GraphQLID } },
@@ -175,7 +167,9 @@ const mutation = new GraphQLObjectType({
   },
 });
 
-module.exports = new GraphQLSchema({
+const graphQLSchema = new GraphQLSchema({
   query: RootQuery,
   mutation,
 });
+
+export default graphQLSchema;
