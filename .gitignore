@@ -1,7 +1,10 @@
 node_modules
+.vscode
 
 data
 
 # dotenv environment variables file
 .env
 .env.*.local
+
+
