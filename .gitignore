@@ -1,3 +1,7 @@
 node_modules
-.env
+
 data
+
+# dotenv environment variables file
+.env
+.env.*.local

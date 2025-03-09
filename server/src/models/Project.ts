@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { SchmaTypeNamesForProject } from "../schemaTpes";
 
 const ProjectSchema = new mongoose.Schema({
   name: {
@@ -17,4 +18,7 @@ const ProjectSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Project", ProjectSchema);
+export const Project = mongoose.model(
+  SchmaTypeNamesForProject.project,
+  ProjectSchema
+);
