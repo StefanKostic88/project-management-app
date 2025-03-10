@@ -8,11 +8,14 @@ require("dotenv").config();
 
 import graphQLSchema from "./schema/schema";
 import { connectDb } from "./config/db";
+import cors from "cors";
 
 const port = PORT;
 const app = express();
 
 connectDb();
+
+app.use(cors());
 
 app.use(
   "/graphql",
