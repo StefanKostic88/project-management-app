@@ -1,17 +1,40 @@
 import { FC } from "react";
 import { FaTrash } from "react-icons/fa";
-import { Client } from "../Client.model";
+import { Client, ClientData } from "../Client.model";
 import { DELETE_CLIENT } from "../../../mutations/clientMutations";
+import { GET_CLIENTS } from "../../../queries/clientQuery";
 import { useMutation } from "@apollo/client";
 
 interface ClientRowProps {
-  client: Omit<Client, "id">;
+  client: Client;
 }
 
-const ClientRow: FC<ClientRowProps> = ({ client: { email, name, phone } }) => {
-  const x = useMutation(DELETE_CLIENT);
+const ClientRow: FC<ClientRowProps> = ({
+  client: { email, name, phone, id },
+}) => {
+  const [deleteClient] = useMutation(DELETE_CLIENT, {
+    variables: { id: id },
+    update(cache, { data: { deleteClient } }) {
+      const clientData = cache.readQuery<ClientData>({
+        query: GET_CLIENTS,
+      });
 
-  const handleOnDelete = () => {};
+      if (clientData && clientData.clients) {
+        const { clients } = clientData;
+
+        cache.writeQuery({
+          query: GET_CLIENTS,
+          data: {
+            clients: clients.filter((client) => client.id !== deleteClient.id),
+          },
+        });
+      }
+    },
+  });
+
+  const handleOnDelete = () => {
+    deleteClient();
+  };
 
   return (
     <tr>
@@ -19,7 +42,7 @@ const ClientRow: FC<ClientRowProps> = ({ client: { email, name, phone } }) => {
       <td>{email}</td>
       <td>{phone}</td>
       <td>
-        <button className="btn bnt-small btn-danger">
+        <button className="btn bnt-small btn-danger" onClick={handleOnDelete}>
           <FaTrash />
         </button>
       </td>

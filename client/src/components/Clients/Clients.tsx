@@ -16,8 +16,8 @@ const Clients = () => {
         <table className="table table-hover mt-3">
           <TableHeader />
           <tbody>
-            {data?.clients.map(({ name, email, phone, id }) => (
-              <ClientRow key={id} client={{ name, email, phone }} />
+            {data?.clients.map((client) => (
+              <ClientRow key={client.id} client={client} />
             ))}
           </tbody>
         </table>
