@@ -1,27 +1,32 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { useMutation } from "@apollo/client";
+import { useInput } from "../../hooks/useInput";
 const AddClientModal = () => {
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
+  const { value: name, handleValueChange: handleNameChange } = useInput();
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(() => e.target.value);
-  };
+  const {
+    value: email,
+    handleValueChange: handleEmailChange,
+    error: emailError,
+    handleBlur: handleEmailBlur,
+    invalidFormat: emailInvalidFormat,
+  } = useInput({ isEmail: true, errorMsg: "Email must be in a valid format" });
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEmail(() => e.target.value);
-  };
-  const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPhone(() => e.target.value);
-  };
+  const { value: phone, handleValueChange: handlePhoneChange } = useInput();
+
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(name, email, phone);
   };
 
+  useEffect(() => {
+    setIsDisabled(() => (emailInvalidFormat ? true : false));
+  }, [emailInvalidFormat]);
+
+  console.log(emailInvalidFormat);
   return (
     <>
       <button
@@ -69,14 +74,26 @@ const AddClientModal = () => {
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Email</label>
+                  <label
+                    className={`form-label ${
+                      emailInvalidFormat ? "text-danger" : ""
+                    }`}
+                  >
+                    Email
+                  </label>
                   <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${
+                      emailInvalidFormat ? "border-danger" : ""
+                    }`}
                     id="email"
                     value={email}
                     onChange={handleEmailChange}
+                    onBlur={handleEmailBlur}
                   />
+                  {emailInvalidFormat && (
+                    <div className="text-danger">{emailError}</div>
+                  )}
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Phone</label>
@@ -88,10 +105,12 @@ const AddClientModal = () => {
                     onChange={handlePhoneChange}
                   />
                 </div>
+
                 <button
                   className="btn btn-secondary"
                   type="submit"
                   data-bs-dismiss="modal"
+                  disabled={isDisabled}
                 >
                   Submit
                 </button>
