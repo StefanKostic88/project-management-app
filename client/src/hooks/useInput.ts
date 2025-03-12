@@ -11,22 +11,50 @@ export const useInput = (options: InputOptions | null = null) => {
   const [error, setError] = useState<string | null>(null);
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
     if (options && options.isEmail) {
       const emailPattern = /\S+@\S+\.\S+/;
-      const match = emailPattern.test(e.target.value);
-
+      const match = emailPattern.test(newValue);
       setError(() => (!match ? options && options.errorMsg : null));
+    }
+
+    if (!options) {
+      setError(() => (newValue.trim() === "" ? "Invalid format" : null));
     }
 
     setValue(() => e.target.value);
   };
 
   const handleBlur = () => {
-    if (value === "") setError(() => options?.errorMsg || "Invalid format");
+    if (value.trim() === "")
+      setError(() => options?.errorMsg || "Invalid format");
     setTouched(() => true);
   };
 
-  const invalidFormat = useMemo(() => error && touched, [error, touched]);
+  const invalidFormat = useMemo(
+    () => (error && touched ? true : false),
+    [error, touched]
+  );
+
+  const generateSubmitError = () => {
+    if (!options && value.trim() === "") {
+      setError(() => "Invalid format");
+      setTouched(() => true);
+      return;
+    }
+    if (options && options.isEmail && value.trim() === "") {
+      setError(() => options && options.errorMsg);
+      setTouched(() => true);
+      return;
+    }
+  };
+
+  const reset = () => {
+    setValue(() => "");
+    setTouched(() => false);
+    setError(() => null);
+  };
 
   return {
     error,
@@ -35,5 +63,7 @@ export const useInput = (options: InputOptions | null = null) => {
     handleValueChange,
     handleBlur,
     invalidFormat,
+    generateSubmitError,
+    reset,
   };
 };

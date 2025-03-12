@@ -1,32 +1,11 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 import { FaUser } from "react-icons/fa";
 import { useMutation } from "@apollo/client";
-import { useInput } from "../../hooks/useInput";
+
+import { useClientForm } from "../../hooks/useClientForm";
 const AddClientModal = () => {
-  const { value: name, handleValueChange: handleNameChange } = useInput();
+  const { hadnleSubmit, inputData, isDisabled, formValid } = useClientForm();
 
-  const {
-    value: email,
-    handleValueChange: handleEmailChange,
-    error: emailError,
-    handleBlur: handleEmailBlur,
-    invalidFormat: emailInvalidFormat,
-  } = useInput({ isEmail: true, errorMsg: "Email must be in a valid format" });
-
-  const { value: phone, handleValueChange: handlePhoneChange } = useInput();
-
-  const [isDisabled, setIsDisabled] = useState(false);
-
-  const hadnleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(name, email, phone);
-  };
-
-  useEffect(() => {
-    setIsDisabled(() => (emailInvalidFormat ? true : false));
-  }, [emailInvalidFormat]);
-
-  console.log(emailInvalidFormat);
   return (
     <>
       <button
@@ -63,53 +42,14 @@ const AddClientModal = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={hadnleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    value={name}
-                    onChange={handleNameChange}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label
-                    className={`form-label ${
-                      emailInvalidFormat ? "text-danger" : ""
-                    }`}
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="text"
-                    className={`form-control ${
-                      emailInvalidFormat ? "border-danger" : ""
-                    }`}
-                    id="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    onBlur={handleEmailBlur}
-                  />
-                  {emailInvalidFormat && (
-                    <div className="text-danger">{emailError}</div>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Phone</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="phone"
-                    value={phone}
-                    onChange={handlePhoneChange}
-                  />
-                </div>
+                {inputData.map((data, index) => (
+                  <CustomInput key={index} {...data} />
+                ))}
 
                 <button
                   className="btn btn-secondary"
                   type="submit"
-                  data-bs-dismiss="modal"
+                  data-bs-dismiss={formValid && "modal"}
                   disabled={isDisabled}
                 >
                   Submit
@@ -124,3 +64,31 @@ const AddClientModal = () => {
 };
 
 export default AddClientModal;
+
+const CustomInput = (data: {
+  label: string;
+  value: string;
+  handleValueChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleBlur: () => void;
+  error: string | null;
+  invalidFormat: boolean;
+}) => {
+  return (
+    <div className="mb-3">
+      <label
+        className={`form-label ${data.invalidFormat ? "text-danger" : ""}`}
+      >
+        {data.label}
+      </label>
+      <input
+        type="text"
+        className={`form-control ${data.invalidFormat ? "border-danger" : ""}`}
+        id={data.label.toLowerCase()}
+        value={data.value}
+        onChange={data.handleValueChange}
+        onBlur={data.handleBlur}
+      />
+      {data.invalidFormat && <div className="text-danger">{data.error}</div>}
+    </div>
+  );
+};
