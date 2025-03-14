@@ -14,7 +14,7 @@ const lazyLoadedData = [
   },
 ];
 
-const LazyLoadedPages = lazyLoadedData.map(({ PageName, path }) => {
+const LazyLoadedPages = lazyLoadedData.map(({ PageName, path }, index) => {
   const page = (
     <Suspense
       fallback={
@@ -27,7 +27,7 @@ const LazyLoadedPages = lazyLoadedData.map(({ PageName, path }) => {
     </Suspense>
   );
 
-  return <Route element={page} path={path} />;
+  return <Route element={page} path={path} key={index} />;
 });
 
 const AppRoutes = () => {
