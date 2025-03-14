@@ -1,0 +1,59 @@
+import { FC, ReactNode } from "react";
+import { FaUser } from "react-icons/fa";
+
+interface ModalComponent {
+  children: ReactNode;
+  btnTitle: string;
+  modalTitle: string;
+  areaLabel: string;
+}
+
+const Modal: FC<ModalComponent> = ({
+  children,
+  btnTitle,
+  modalTitle,
+  areaLabel,
+}) => {
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-secondary"
+        data-bs-toggle="modal"
+        data-bs-target={`#${areaLabel}`}
+      >
+        <div className="d-flex align-items-center">
+          <FaUser className="icon" />
+          <div>{btnTitle}</div>
+        </div>
+      </button>
+
+      <div
+        className="modal fade"
+        id={areaLabel}
+        tabIndex={-1}
+        aria-labelledby={`${areaLabel}Label`}
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id={`${areaLabel}Label`}>
+                {modalTitle}
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">{children}</div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Modal;

@@ -6,3 +6,4 @@ export { default as AddProjectModal } from "../components/AddProjectModal/AddPro
 
 // UI
 export { default as Spinner } from "../components/ui/Spinner/Spinner";
+export { default as Modal } from "../components/ui/Modal/Modal";
