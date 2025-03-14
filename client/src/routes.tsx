@@ -6,7 +6,7 @@ import { Home } from "./pages";
 const lazyLoadedData = [
   {
     PageName: lazy(() => import("./pages/Project/Project")),
-    path: "/project",
+    path: "/projects/:id",
   },
   {
     PageName: lazy(() => import("./pages/NotFound/NotFound")),
