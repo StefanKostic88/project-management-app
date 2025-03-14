@@ -1,5 +1,5 @@
-import { ChangeEvent } from "react";
 import Modal from "../ui/Modal/Modal";
+import CustomInput from "../ui/CustomInput/CustomInput";
 
 import { useClientForm } from "../../hooks/useClientForm";
 const AddClientModal = () => {
@@ -13,7 +13,10 @@ const AddClientModal = () => {
     >
       <form onSubmit={hadnleSubmit}>
         {inputData.map((data, index) => (
-          <CustomInput key={index} {...data} />
+          <CustomInput key={index} data={data}>
+            <CustomInput.Input />
+            <CustomInput.Error />
+          </CustomInput>
         ))}
 
         <button
@@ -30,31 +33,3 @@ const AddClientModal = () => {
 };
 
 export default AddClientModal;
-
-const CustomInput = (data: {
-  label: string;
-  value: string;
-  handleValueChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleBlur: () => void;
-  error: string | null;
-  invalidFormat: boolean;
-}) => {
-  return (
-    <div className="mb-3">
-      <label
-        className={`form-label ${data.invalidFormat ? "text-danger" : ""}`}
-      >
-        {data.label}
-      </label>
-      <input
-        type="text"
-        className={`form-control ${data.invalidFormat ? "border-danger" : ""}`}
-        id={data.label.toLowerCase()}
-        value={data.value}
-        onChange={data.handleValueChange}
-        onBlur={data.handleBlur}
-      />
-      {data.invalidFormat && <div className="text-danger">{data.error}</div>}
-    </div>
-  );
-};
