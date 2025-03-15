@@ -1,13 +1,11 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useInput } from "./useInput";
-import { useMutation } from "@apollo/client";
-import { ADD_CLIENT } from "../mutations/clientMutations";
-import { GET_CLIENTS } from "../queries/clientQuery";
-import { ClientData } from "../components/Clients/Client.model";
+import { useClientGraphQlService } from "./useClientGraphQlService";
 
 export const useClientForm = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
+  const { useAddClient } = useClientGraphQlService();
 
   const {
     value: name,
@@ -39,25 +37,7 @@ export const useClientForm = () => {
     reset: resetPhone,
   } = useInput();
 
-  const [addClient] = useMutation(ADD_CLIENT, {
-    variables: { name, email, phone },
-    update(cache, { data: { addClient } }) {
-      const clientData = cache.readQuery<ClientData>({
-        query: GET_CLIENTS,
-      });
-
-      if (clientData && clientData.clients) {
-        const { clients } = clientData;
-
-        cache.writeQuery({
-          query: GET_CLIENTS,
-          data: {
-            clients: clients.concat([addClient]),
-          },
-        });
-      }
-    },
-  });
+  const { addClient } = useAddClient({ name, email, phone });
 
   const generateInputErrors = () => {
     generateNameError();
