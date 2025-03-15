@@ -1,4 +1,5 @@
 import { ChangeEvent, createContext, FC, ReactNode, useContext } from "react";
+import { Client } from "../../Clients/Client.model";
 
 export type InputTypes =
   | HTMLInputElement
@@ -24,7 +25,7 @@ type CustomInputType = FC<CustomInputComponent> & {
   Error: FC;
   TextArea: FC;
   Select: FC<{
-    optionsData: Record<string, string>;
+    optionsData: Record<string, string> | Client[];
   }>;
 };
 
@@ -87,10 +88,12 @@ const TextAreaComponent: FC = () => {
   );
 };
 
+const isRecord = <K extends string, V>(data: unknown): data is Record<K, V> => {
+  return !Array.isArray(data) && typeof data === "object" && data !== null;
+};
+
 const SelectOptionsComponent: FC<{
-  optionsData: {
-    [key: string]: string;
-  };
+  optionsData: Record<string, string> | Client[];
 }> = ({ optionsData }) => {
   const { value, handleValueChange, label } =
     useCustomInputContext() as unknown as CustomInputContextProps<HTMLSelectElement>;
@@ -101,13 +104,21 @@ const SelectOptionsComponent: FC<{
       id={label.toLowerCase()}
       className="form-select"
     >
-      {Object.entries(optionsData).map(([key, value]) => {
-        return (
-          <option value={key} key={key}>
-            {value}
-          </option>
-        );
-      })}
+      {isRecord(optionsData)
+        ? Object.entries(optionsData).map(([key, value]) => {
+            return (
+              <option value={key} key={key}>
+                {value}
+              </option>
+            );
+          })
+        : optionsData.map(({ id, name }) => {
+            return (
+              <option value={id} key={id}>
+                {name}
+              </option>
+            );
+          })}
     </select>
   );
 };
