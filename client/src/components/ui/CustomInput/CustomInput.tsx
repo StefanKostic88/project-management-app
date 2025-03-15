@@ -24,9 +24,7 @@ type CustomInputType = FC<CustomInputComponent> & {
   Error: FC;
   TextArea: FC;
   Select: FC<{
-    optionsData: {
-      [key: string]: string;
-    };
+    optionsData: Record<string, string>;
   }>;
 };
 
