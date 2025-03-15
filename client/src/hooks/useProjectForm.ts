@@ -14,11 +14,13 @@ export const useProject = () => {
     completed: "Completed",
   };
 
-  const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>): void => {
     setStatus(() => e.target.value);
   };
 
-  const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    e: ChangeEvent<HTMLTextAreaElement>
+  ): void => {
     setDescription(() => e.target.value);
   };
 
@@ -57,7 +59,7 @@ export const useProject = () => {
     label: "Status",
   };
 
-  const hadnleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!formValid) {
       setIsDisabled(() => true);

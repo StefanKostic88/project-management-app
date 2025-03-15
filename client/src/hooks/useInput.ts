@@ -7,10 +7,10 @@ interface InputOptions {
 
 export const useInput = (options: InputOptions | null = null) => {
   const [value, setValue] = useState<string>("");
-  const [touched, setTouched] = useState(false);
+  const [touched, setTouched] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleValueChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const newValue = e.target.value;
 
     if (options && options.isEmail) {
@@ -26,7 +26,7 @@ export const useInput = (options: InputOptions | null = null) => {
     setValue(() => e.target.value);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (): void => {
     if (value.trim() === "")
       setError(() => options?.errorMsg || "Invalid format");
     setTouched(() => true);
@@ -37,7 +37,7 @@ export const useInput = (options: InputOptions | null = null) => {
     [error, touched]
   );
 
-  const generateSubmitError = () => {
+  const generateSubmitError = (): void => {
     if (!options && value.trim() === "") {
       setError(() => "Invalid format");
       setTouched(() => true);
@@ -50,7 +50,7 @@ export const useInput = (options: InputOptions | null = null) => {
     }
   };
 
-  const reset = () => {
+  const reset = (): void => {
     setValue(() => "");
     setTouched(() => false);
     setError(() => null);
