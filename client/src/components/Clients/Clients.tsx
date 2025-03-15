@@ -1,11 +1,11 @@
-import { useQuery } from "@apollo/client";
 import ClientRow from "./ClientRow/ClientRow";
-import { ClientData } from "./Client.model";
-import { GET_CLIENTS } from "../../queries/clientQuery";
+
 import Spinner from "../ui/Spinner/Spinner";
+import { useClientGraphQlService } from "../../hooks/useClientGraphQlService";
 
 const Clients = () => {
-  const { loading, error, data } = useQuery<ClientData>(GET_CLIENTS);
+  const { useGetClients } = useClientGraphQlService();
+  const { data, error, loading } = useGetClients();
 
   if (loading) return <Spinner />;
   if (error) return <p>Something went wrong</p>;

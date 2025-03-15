@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { Project } from "../Project.model";
+import { ProjectInterface } from "../Project.model";
 
 interface ProjectCardInterface {
-  project: Project;
+  project: ProjectInterface;
 }
 
 const ProjectCard: FC<ProjectCardInterface> = ({ project }) => {

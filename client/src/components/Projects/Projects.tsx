@@ -1,11 +1,10 @@
 import Spinner from "../ui/Spinner/Spinner";
-import { useQuery } from "@apollo/client";
-import { GET_PROJECTS } from "../../queries/projectQuery";
-import { ProjectData } from "./Project.model";
 import ProjectCard from "./ProjectCard/ProjectCard";
+import { useProjectGraphQlService } from "../../hooks/useProjectGraphQlService";
 
 const Projects = () => {
-  const { loading, data, error } = useQuery<ProjectData>(GET_PROJECTS);
+  const { useGetProjects } = useProjectGraphQlService();
+  const { loading, data, error } = useGetProjects();
 
   if (loading) return <Spinner />;
   if (error) return <p>Something went wrong</p>;
