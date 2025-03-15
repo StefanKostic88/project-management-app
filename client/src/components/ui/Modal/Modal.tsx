@@ -1,11 +1,13 @@
 import { FC, ReactNode } from "react";
-import { FaUser } from "react-icons/fa";
+import { IconType } from "react-icons";
+
 
 interface ModalComponent {
   children: ReactNode;
   btnTitle: string;
   modalTitle: string;
   areaLabel: string;
+  Icon: IconType;
 }
 
 const Modal: FC<ModalComponent> = ({
@@ -13,6 +15,7 @@ const Modal: FC<ModalComponent> = ({
   btnTitle,
   modalTitle,
   areaLabel,
+  Icon,
 }) => {
   return (
     <>
@@ -23,7 +26,7 @@ const Modal: FC<ModalComponent> = ({
         data-bs-target={`#${areaLabel}`}
       >
         <div className="d-flex align-items-center">
-          <FaUser className="icon" />
+          <Icon className="icon" />
           <div>{btnTitle}</div>
         </div>
       </button>

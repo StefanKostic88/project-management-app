@@ -1,12 +1,17 @@
 import { ChangeEvent, createContext, FC, ReactNode, useContext } from "react";
 
-interface CustomInputContextProps {
+export type InputTypes =
+  | HTMLInputElement
+  | HTMLTextAreaElement
+  | HTMLSelectElement;
+
+interface CustomInputContextProps<T extends InputTypes = HTMLInputElement> {
   label: string;
   value: string;
-  error: string | null;
-  invalidFormat: boolean;
-  handleValueChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleBlur: () => void;
+  error?: string | null;
+  invalidFormat?: boolean;
+  handleValueChange: (e: ChangeEvent<T>) => void;
+  handleBlur?: () => void;
 }
 
 interface CustomInputComponent {
@@ -17,6 +22,12 @@ interface CustomInputComponent {
 type CustomInputType = FC<CustomInputComponent> & {
   Input: FC;
   Error: FC;
+  TextArea: FC;
+  Select: FC<{
+    optionsData: {
+      [key: string]: string;
+    };
+  }>;
 };
 
 const customInputContext = createContext<CustomInputContextProps | null>(null);
@@ -65,7 +76,47 @@ const ErrorComponent: FC = () => {
   return <>{invalidFormat && <div className="text-danger">{error}</div>}</>;
 };
 
+const TextAreaComponent: FC = () => {
+  const { value, label, handleValueChange } =
+    useCustomInputContext() as unknown as CustomInputContextProps<HTMLTextAreaElement>;
+  return (
+    <textarea
+      className="form-control"
+      id={label.toLowerCase()}
+      value={value}
+      onChange={handleValueChange}
+    />
+  );
+};
+
+const SelectOptionsComponent: FC<{
+  optionsData: {
+    [key: string]: string;
+  };
+}> = ({ optionsData }) => {
+  const { value, handleValueChange, label } =
+    useCustomInputContext() as unknown as CustomInputContextProps<HTMLSelectElement>;
+  return (
+    <select
+      value={value}
+      onChange={handleValueChange}
+      id={label.toLowerCase()}
+      className="form-select"
+    >
+      {Object.entries(optionsData).map(([key, value]) => {
+        return (
+          <option value={key} key={key}>
+            {value}
+          </option>
+        );
+      })}
+    </select>
+  );
+};
+
 CustomInput.Input = InputComponent;
 CustomInput.Error = ErrorComponent;
+CustomInput.TextArea = TextAreaComponent;
+CustomInput.Select = SelectOptionsComponent;
 
 export default CustomInput;

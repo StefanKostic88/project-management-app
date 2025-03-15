@@ -1,6 +1,8 @@
 import Modal from "../ui/Modal/Modal";
 import CustomInput from "../ui/CustomInput/CustomInput";
 
+import { FaUser } from "react-icons/fa";
+
 import { useClientForm } from "../../hooks/useClientForm";
 const AddClientModal = () => {
   const { hadnleSubmit, inputData, isDisabled, formValid } = useClientForm();
@@ -10,6 +12,7 @@ const AddClientModal = () => {
       areaLabel="addClientModal"
       btnTitle="Add Client"
       modalTitle="Add Client"
+      Icon={FaUser}
     >
       <form onSubmit={hadnleSubmit}>
         {inputData.map((data, index) => (
