@@ -1,12 +1,18 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useInput } from "./useInput";
 import { InputTypes } from "../components/ui/CustomInput/CustomInput";
+import { useClientGraphQlService } from "./useClientGraphQlService";
 
 export const useProject = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("new");
+  const [clientId, setClientId] = useState("");
+
+  const { useGetClients } = useClientGraphQlService();
+  const clientsData = useGetClients();
+  const clients = clientsData.data?.clients;
 
   const optionsData = {
     new: "Not Started",
@@ -22,6 +28,10 @@ export const useProject = () => {
     e: ChangeEvent<HTMLTextAreaElement>
   ): void => {
     setDescription(() => e.target.value);
+  };
+
+  const handleSelectClientId = (e: ChangeEvent<HTMLSelectElement>): void => {
+    setClientId(() => e.target.value);
   };
 
   const {
@@ -51,6 +61,14 @@ export const useProject = () => {
     label: "Description",
   };
 
+  const clientNameData = {
+    value: clientId,
+    label: "Client",
+    handleValueChange: handleSelectClientId as (
+      e: ChangeEvent<InputTypes>
+    ) => void,
+  };
+
   const projectStatusNameData = {
     value: status,
     handleValueChange: handleSelectStatus as (
@@ -59,8 +77,15 @@ export const useProject = () => {
     label: "Status",
   };
 
+  const resetClientId = () => {
+    if (clients?.length && clientId !== clients[0].id) {
+      setClientId(clients[0].id);
+    }
+  };
+
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
     if (!formValid) {
       setIsDisabled(() => true);
       generateNameError();
@@ -70,7 +95,12 @@ export const useProject = () => {
     resetName();
     setDescription(() => "");
     setStatus(() => "new");
+    resetClientId();
   };
+
+  useEffect(() => {
+    resetClientId();
+  }, [clients]);
 
   useEffect(() => {
     const isFormValid = !!name && !namelInvalidFormat;
@@ -87,5 +117,7 @@ export const useProject = () => {
     descriptionNameData,
     optionsData,
     projectStatusNameData,
+    clientsData,
+    clientNameData,
   };
 };

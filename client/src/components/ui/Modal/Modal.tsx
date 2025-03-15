@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
 import { IconType } from "react-icons";
 
-
 interface ModalComponent {
   children: ReactNode;
   btnTitle: string;
   modalTitle: string;
   areaLabel: string;
   Icon: IconType;
+  btnColor?: "btn-primary" | "btn-secondary";
 }
 
 const Modal: FC<ModalComponent> = ({
@@ -16,12 +16,13 @@ const Modal: FC<ModalComponent> = ({
   modalTitle,
   areaLabel,
   Icon,
+  btnColor = "btn-secondary",
 }) => {
   return (
     <>
       <button
         type="button"
-        className="btn btn-secondary"
+        className={`btn ${btnColor}`}
         data-bs-toggle="modal"
         data-bs-target={`#${areaLabel}`}
       >

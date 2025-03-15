@@ -1,17 +1,13 @@
 import ClientRow from "./ClientRow/ClientRow";
-
-import Spinner from "../ui/Spinner/Spinner";
 import { useClientGraphQlService } from "../../hooks/useClientGraphQlService";
+import ComponentWraper from "../ui/ComponentWraper/ComponentWraper";
 
 const Clients = () => {
   const { useGetClients } = useClientGraphQlService();
   const { data, error, loading } = useGetClients();
 
-  if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong</p>;
-
   return (
-    <>
+    <ComponentWraper error={error} loading={loading}>
       {!loading && !error && (
         <table className="table table-hover mt-3">
           <TableHeader />
@@ -22,7 +18,7 @@ const Clients = () => {
           </tbody>
         </table>
       )}
-    </>
+    </ComponentWraper>
   );
 };
 
