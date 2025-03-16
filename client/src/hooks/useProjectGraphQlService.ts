@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { ProjectData } from "../components/Projects/Project.model";
 import { GET_PROJECTS } from "../queries/projectQuery";
-import { ADD_PROJECT } from "../mutations/projectMutations";
+import { ADD_PROJECT, DELETE_PROJECT } from "../mutations/projectMutations";
+import { useNavigate } from "react-router-dom";
 
 export const useProjectGraphQlService = () => {
   const useAddProject = (options: {
@@ -39,5 +40,16 @@ export const useProjectGraphQlService = () => {
     return { loading, data, error };
   };
 
-  return { useGetProjects, useAddProject };
+  const useDeleteClient = (projectId: string) => {
+    const navigate = useNavigate();
+
+    const [deleteProject] = useMutation(DELETE_PROJECT, {
+      variables: { id: projectId },
+      onCompleted: () => navigate("/"),
+    });
+
+    return { deleteProject };
+  };
+
+  return { useGetProjects, useAddProject, useDeleteClient };
 };

@@ -6,6 +6,9 @@ import { ProjectInterfaceQuery } from "../../components/Projects/Project.model";
 import { FaEnvelope, FaPhone, FaIdBadge } from "react-icons/fa";
 import { Client } from "../../components/Clients/Client.model";
 import { FC } from "react";
+import { FaTrash } from "react-icons/fa";
+
+import { useProjectGraphQlService } from "../../hooks/useProjectGraphQlService";
 
 const Project = () => {
   const { id } = useParams();
@@ -31,6 +34,7 @@ const Project = () => {
           <h5 className="mt-3">Project Status</h5>
           <p className="lead">{data?.project.status}</p>
           <ClientInfo client={data?.project.client} />
+          <DeleteProjectButton projectId={id ? id : ""} />
         </div>
       )}
     </>
@@ -59,5 +63,22 @@ const ClientInfo: FC<ClientInfoInterface> = ({ client }) => {
         </li>
       </ul>
     </>
+  );
+};
+
+interface DeleteProjectButtonProps {
+  projectId: string;
+}
+
+const DeleteProjectButton: FC<DeleteProjectButtonProps> = ({ projectId }) => {
+  const { useDeleteClient } = useProjectGraphQlService();
+  const { deleteProject } = useDeleteClient(projectId);
+
+  return (
+    <div className="d-flex mt-5 ms-auto">
+      <button className="btn btn-danger m-2" onClick={() => deleteProject()}>
+        <FaTrash className="icon" /> Delete Project
+      </button>
+    </div>
   );
 };
