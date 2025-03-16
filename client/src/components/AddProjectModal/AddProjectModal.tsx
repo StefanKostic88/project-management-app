@@ -37,6 +37,7 @@ const AddProjectModal = () => {
 
           <CustomInput data={descriptionNameData}>
             <CustomInput.TextArea />
+            <CustomInput.Error />
           </CustomInput>
 
           <CustomInput data={projectStatusNameData}>

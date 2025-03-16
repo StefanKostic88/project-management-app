@@ -2,15 +2,17 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useInput } from "./useInput";
 import { InputTypes } from "../components/ui/CustomInput/CustomInput";
 import { useClientGraphQlService } from "./useClientGraphQlService";
+import { useProjectGraphQlService } from "./useProjectGraphQlService";
 
 export const useProject = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
-  const [description, setDescription] = useState("");
+  // const [description, setDescription] = useState("");
   const [status, setStatus] = useState("new");
   const [clientId, setClientId] = useState("");
 
   const { useGetClients } = useClientGraphQlService();
+  const { useAddProject } = useProjectGraphQlService();
   const clientsData = useGetClients();
   const clients = clientsData.data?.clients;
 
@@ -22,12 +24,6 @@ export const useProject = () => {
 
   const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>): void => {
     setStatus(() => e.target.value);
-  };
-
-  const handleDescriptionChange = (
-    e: ChangeEvent<HTMLTextAreaElement>
-  ): void => {
-    setDescription(() => e.target.value);
   };
 
   const handleSelectClientId = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -42,6 +38,16 @@ export const useProject = () => {
     invalidFormat: namelInvalidFormat,
     generateSubmitError: generateNameError,
     reset: resetName,
+  } = useInput();
+
+  const {
+    value: description,
+    handleTextAreaValueChange: handleDescriptionChange,
+    error: descriptionError,
+    handleBlur: handleDescriptionBlur,
+    invalidFormat: descriptionlInvalidFormat,
+    generateSubmitError: generateDescriptionError,
+    reset: resetDescription,
   } = useInput();
 
   const projectNameData = {
@@ -59,6 +65,9 @@ export const useProject = () => {
       e: ChangeEvent<InputTypes>
     ) => void,
     label: "Description",
+    invalidFormat: descriptionlInvalidFormat,
+    error: descriptionError,
+    handleBlur: handleDescriptionBlur,
   };
 
   const clientNameData = {
@@ -83,17 +92,22 @@ export const useProject = () => {
     }
   };
 
+  const { addProject } = useAddProject({ clientId, description, name, status });
+
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
     if (!formValid) {
       setIsDisabled(() => true);
       generateNameError();
+      generateDescriptionError();
       return;
     }
 
+    addProject({ variables: { name, description, clientId, status } });
+
     resetName();
-    setDescription(() => "");
+    resetDescription();
     setStatus(() => "new");
     resetClientId();
   };
@@ -103,10 +117,16 @@ export const useProject = () => {
   }, [clients]);
 
   useEffect(() => {
-    const isFormValid = !!name && !namelInvalidFormat;
+    const isFormValid =
+      !!name &&
+      !namelInvalidFormat &&
+      !!description &&
+      !descriptionlInvalidFormat;
+
+    const invalid = namelInvalidFormat || descriptionlInvalidFormat;
     setFormValid(isFormValid);
-    setIsDisabled(namelInvalidFormat);
-  }, [namelInvalidFormat, name]);
+    setIsDisabled(invalid);
+  }, [namelInvalidFormat, name, description, descriptionlInvalidFormat]);
 
   return {
     projectNameData,

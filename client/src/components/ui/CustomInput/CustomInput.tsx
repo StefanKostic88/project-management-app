@@ -76,14 +76,15 @@ const ErrorComponent: FC = () => {
 };
 
 const TextAreaComponent: FC = () => {
-  const { value, label, handleValueChange } =
+  const { value, label, handleValueChange, handleBlur, invalidFormat } =
     useCustomInputContext() as unknown as CustomInputContextProps<HTMLTextAreaElement>;
   return (
     <textarea
-      className="form-control"
+      className={`form-control ${invalidFormat ? "border-danger" : ""}`}
       id={label.toLowerCase()}
       value={value}
       onChange={handleValueChange}
+      onBlur={handleBlur}
     />
   );
 };
