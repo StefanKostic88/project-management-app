@@ -1,12 +1,18 @@
 import { ChangeEvent, createContext, FC, ReactNode, useContext } from "react";
 import { Client } from "../../Clients/Client.model";
+import InputComponent from "./components/InputComponent";
+import ErrorComponent from "./components/ErrorComponent";
+import TextAreaComponent from "./components/TextAreaComponent";
+import SelectOptionsComponent from "./components/SelectOptionsComponent";
 
 export type InputTypes =
   | HTMLInputElement
   | HTMLTextAreaElement
   | HTMLSelectElement;
 
-interface CustomInputContextProps<T extends InputTypes = HTMLInputElement> {
+export interface CustomInputContextProps<
+  T extends InputTypes = HTMLInputElement
+> {
   label: string;
   value: string;
   error?: string | null;
@@ -31,7 +37,7 @@ type CustomInputType = FC<CustomInputComponent> & {
 
 const customInputContext = createContext<CustomInputContextProps | null>(null);
 
-function useCustomInputContext() {
+export function useCustomInputContext() {
   const context = useContext(customInputContext);
   if (!context) {
     throw new Error("Must have a input context");
@@ -52,74 +58,6 @@ const CustomInput: CustomInputType = ({ data, children }) => {
         {children}
       </div>
     </customInputContext.Provider>
-  );
-};
-
-const InputComponent: FC = () => {
-  const { value, label, handleValueChange, handleBlur, invalidFormat } =
-    useCustomInputContext();
-  return (
-    <input
-      type="text"
-      className={`form-control ${invalidFormat ? "border-danger" : ""}`}
-      id={label.toLowerCase()}
-      value={value}
-      onChange={handleValueChange}
-      onBlur={handleBlur}
-    />
-  );
-};
-
-const ErrorComponent: FC = () => {
-  const { invalidFormat, error } = useCustomInputContext();
-  return <>{invalidFormat && <div className="text-danger">{error}</div>}</>;
-};
-
-const TextAreaComponent: FC = () => {
-  const { value, label, handleValueChange } =
-    useCustomInputContext() as unknown as CustomInputContextProps<HTMLTextAreaElement>;
-  return (
-    <textarea
-      className="form-control"
-      id={label.toLowerCase()}
-      value={value}
-      onChange={handleValueChange}
-    />
-  );
-};
-
-const isRecord = <K extends string, V>(data: unknown): data is Record<K, V> => {
-  return !Array.isArray(data) && typeof data === "object" && data !== null;
-};
-
-const SelectOptionsComponent: FC<{
-  optionsData: Record<string, string> | Client[];
-}> = ({ optionsData }) => {
-  const { value, handleValueChange, label } =
-    useCustomInputContext() as unknown as CustomInputContextProps<HTMLSelectElement>;
-  return (
-    <select
-      value={value}
-      onChange={handleValueChange}
-      id={label.toLowerCase()}
-      className="form-select"
-    >
-      {isRecord(optionsData)
-        ? Object.entries(optionsData).map(([key, value]) => {
-            return (
-              <option value={key} key={key}>
-                {value}
-              </option>
-            );
-          })
-        : optionsData.map(({ id, name }) => {
-            return (
-              <option value={id} key={id}>
-                {name}
-              </option>
-            );
-          })}
-    </select>
   );
 };
 

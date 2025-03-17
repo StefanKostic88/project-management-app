@@ -12,9 +12,9 @@ const Clients = () => {
         <table className="table table-hover mt-3">
           <TableHeader />
           <tbody>
-            {data?.clients.map((client) => (
-              <ClientRow key={client.id} client={client} />
-            ))}
+            {data?.clients.map((client) => {
+              return <ClientRow key={client.id} client={client} />;
+            })}
           </tbody>
         </table>
       )}

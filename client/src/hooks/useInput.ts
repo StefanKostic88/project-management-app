@@ -26,6 +26,15 @@ export const useInput = (options: InputOptions | null = null) => {
     setValue(() => e.target.value);
   };
 
+  const handleTextAreaValueChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    if (!options) {
+      setError(() => (newValue.trim() === "" ? "Invalid format" : null));
+    }
+
+    setValue(() => e.target.value);
+  };
+
   const handleBlur = (): void => {
     if (value.trim() === "")
       setError(() => options?.errorMsg || "Invalid format");
@@ -65,5 +74,6 @@ export const useInput = (options: InputOptions | null = null) => {
     invalidFormat,
     generateSubmitError,
     reset,
+    handleTextAreaValueChange,
   };
 };

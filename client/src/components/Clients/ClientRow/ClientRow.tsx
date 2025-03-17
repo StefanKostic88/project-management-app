@@ -2,18 +2,20 @@ import { FC } from "react";
 import { FaTrash } from "react-icons/fa";
 import { Client } from "../Client.model";
 import { useClientGraphQlService } from "../../../hooks/useClientGraphQlService";
+import Modal from "../../ui/Modal/Modal";
 
 interface ClientRowProps {
   client: Client;
 }
 
 const ClientRow: FC<ClientRowProps> = ({
-  client: { email, name, phone, id },
+  client: { email, id, name, phone },
 }) => {
   const { useDeleteClient } = useClientGraphQlService();
   const { deleteClient } = useDeleteClient(id);
 
-  const handleOnDelete = () => {
+  const handleOnDeleteClient = () => {
+    console.log(id);
     deleteClient();
   };
 
@@ -23,9 +25,19 @@ const ClientRow: FC<ClientRowProps> = ({
       <td>{email}</td>
       <td>{phone}</td>
       <td>
-        <button className="btn bnt-small btn-danger" onClick={handleOnDelete}>
-          <FaTrash />
-        </button>
+        <Modal
+          Icon={FaTrash}
+          areaLabel={`client-${id}`}
+          btnTitle=""
+          modalTitle={`Delete ${name}`}
+          key={id}
+        >
+          <Modal.ModalControls
+            confirmName="Delete Client"
+            title="Are your sure you want to delete client?"
+            clickHandler={handleOnDeleteClient}
+          />
+        </Modal>
       </td>
     </tr>
   );
