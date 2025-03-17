@@ -25,13 +25,6 @@ const ClientRow: FC<ClientRowProps> = ({
       <td>{email}</td>
       <td>{phone}</td>
       <td>
-        {/* <button
-          className="btn bnt-small btn-danger"
-          onClick={handleOnDeleteClient}
-        >
-          <FaTrash />
-        </button> */}
-
         <Modal
           Icon={FaTrash}
           areaLabel={`client-${id}`}
@@ -39,24 +32,11 @@ const ClientRow: FC<ClientRowProps> = ({
           modalTitle={`Delete ${name}`}
           key={id}
         >
-          <p className="mb-5">Are your sure you want to delete project?</p>
-          <div className="modal-footer mt-2">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger "
-              onClick={handleOnDeleteClient}
-              data-bs-dismiss="modal"
-            >
-              Delete Project
-            </button>
-          </div>
+          <Modal.ModalControls
+            confirmName="Delete Client"
+            title="Are your sure you want to delete client?"
+            clickHandler={handleOnDeleteClient}
+          />
         </Modal>
       </td>
     </tr>

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import { IconType } from "react-icons";
 
 interface ModalComponent {
@@ -12,7 +12,17 @@ interface ModalComponent {
   iconClass?: "icon" | "";
 }
 
-const Modal: FC<ModalComponent> = ({
+export interface ModalControlsProps {
+  title: string;
+  confirmName: string;
+  clickHandler: () => void;
+}
+
+type CustomModalComponent = FC<ModalComponent> & {
+  ModalControls: FC<ModalControlsProps>;
+};
+
+const Modal: CustomModalComponent = ({
   children,
   btnTitle,
   modalTitle,
@@ -22,10 +32,27 @@ const Modal: FC<ModalComponent> = ({
   additionalBtnClass,
   iconClass = "icon",
 }) => {
+  const openButtonRef = useRef<HTMLButtonElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+    const modalElement = modalRef.current;
+    const handleHiden = () => {
+      openButtonRef.current?.focus();
+    };
+    modalElement.addEventListener("hidden.bs.modal", handleHiden);
+
+    return () => {
+      modalElement.removeEventListener("hidden.bs.modal", handleHiden);
+    };
+  }, []);
+
   return (
     <>
       <div className={`d-flex ${additionalBtnClass}`}>
         <button
+          ref={openButtonRef}
           type="button"
           className={`btn ${btnColor}`}
           data-bs-toggle="modal"
@@ -39,11 +66,13 @@ const Modal: FC<ModalComponent> = ({
       </div>
 
       <div
+        ref={modalRef}
         className="modal fade"
         id={areaLabel}
         tabIndex={-1}
         aria-labelledby={`${areaLabel}Label`}
         aria-hidden="true"
+        data-bs-backdrop="static"
       >
         <div className="modal-dialog">
           <div className="modal-content">
@@ -65,5 +94,36 @@ const Modal: FC<ModalComponent> = ({
     </>
   );
 };
+
+const ModalControls: FC<ModalControlsProps> = ({
+  title,
+  confirmName,
+  clickHandler,
+}) => {
+  return (
+    <>
+      <p className="mb-5">{title}</p>
+      <div className="modal-footer mt-2">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          className="btn btn-danger "
+          onClick={clickHandler}
+          data-bs-dismiss="modal"
+        >
+          {confirmName}
+        </button>
+      </div>
+    </>
+  );
+};
+
+Modal.ModalControls = ModalControls;
 
 export default Modal;
