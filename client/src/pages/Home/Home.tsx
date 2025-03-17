@@ -8,7 +8,7 @@ import {
 
 const Home = () => {
   useEffect(() => {
-    document.title = "Home Page";
+    document.title = "Home";
   }, []);
   return (
     <>

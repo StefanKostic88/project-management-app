@@ -3,6 +3,7 @@ export { default as Clients } from "../components/Clients/Clients";
 export { default as AddClientModal } from "../components/AddClientModal/AddClientModal";
 export { default as Projects } from "../components/Projects/Projects";
 export { default as AddProjectModal } from "../components/AddProjectModal/AddProjectModal";
+export { default as ProjectCompound } from "../components/ProjectCompound/ProjectCompound";
 
 // UI
 export { default as Spinner } from "../components/ui/Spinner/Spinner";
