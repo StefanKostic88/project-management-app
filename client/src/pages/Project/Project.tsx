@@ -1,43 +1,39 @@
 import { Link, useParams } from "react-router-dom";
-import { Spinner } from "../../components";
-import { useQuery } from "@apollo/client";
-import { GET_PROJECT } from "../../queries/projectQuery";
-import { ProjectInterfaceQuery } from "../../components/Projects/Project.model";
+
 import { FaEnvelope, FaPhone, FaIdBadge } from "react-icons/fa";
 import { Client } from "../../components/Clients/Client.model";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 
 import { useProjectGraphQlService } from "../../hooks/useProjectGraphQlService";
+import { ComponentWraper } from "../../components";
 
 const Project = () => {
   const { id } = useParams();
-  const { data, loading, error } = useQuery<ProjectInterfaceQuery>(
-    GET_PROJECT,
-    {
-      variables: { id },
-    }
-  );
+  const { useGetProject } = useProjectGraphQlService();
+  const { data, loading, error } = useGetProject(id ?? "");
 
-  if (loading) return <Spinner />;
-  if (error) return <p>Something went wrong</p>;
+  useEffect(() => {
+    if (data && data.project.name) {
+      const title = data.project.name;
+      document.title = title;
+    }
+  }, [data]);
 
   return (
-    <>
-      {!loading && !error && (
-        <div className="mx-auto w-75 card p-5">
-          <Link to="/" className="btn btn-light btn-sm w-25 d-inline ms-auto">
-            Back
-          </Link>
-          <h1>{data?.project.name}</h1>
-          <p>{data?.project.description}</p>
-          <h5 className="mt-3">Project Status</h5>
-          <p className="lead">{data?.project.status}</p>
-          <ClientInfo client={data?.project.client} />
-          <DeleteProjectButton projectId={id ? id : ""} />
-        </div>
-      )}
-    </>
+    <ComponentWraper loading={loading} error={error}>
+      <div className="mx-auto w-75 card p-5">
+        <Link to="/" className="btn btn-light btn-sm w-25 d-inline ms-auto">
+          Back
+        </Link>
+        <h1>{data?.project.name}</h1>
+        <p>{data?.project.description}</p>
+        <h5 className="mt-3">Project Status</h5>
+        <p className="lead">{data?.project.status}</p>
+        <ClientInfo client={data?.project.client} />
+        <DeleteProjectButton projectId={id ? id : ""} />
+      </div>
+    </ComponentWraper>
   );
 };
 

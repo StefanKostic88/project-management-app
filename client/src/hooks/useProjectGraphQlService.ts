@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { ProjectData } from "../components/Projects/Project.model";
-import { GET_PROJECTS } from "../queries/projectQuery";
+import {
+  ProjectData,
+  ProjectInterfaceQuery,
+} from "../components/Projects/Project.model";
+import { GET_PROJECT, GET_PROJECTS } from "../queries/projectQuery";
 import { ADD_PROJECT, DELETE_PROJECT } from "../mutations/projectMutations";
 import { useNavigate } from "react-router-dom";
 
@@ -51,5 +54,16 @@ export const useProjectGraphQlService = () => {
     return { deleteProject };
   };
 
-  return { useGetProjects, useAddProject, useDeleteClient };
+  const useGetProject = (id: string) => {
+    const { data, loading, error } = useQuery<ProjectInterfaceQuery>(
+      GET_PROJECT,
+      {
+        variables: { id },
+      }
+    );
+
+    return { data, loading, error };
+  };
+
+  return { useGetProjects, useAddProject, useDeleteClient, useGetProject };
 };

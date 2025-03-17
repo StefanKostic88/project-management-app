@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   AddClientModal,
   Clients,
@@ -6,6 +7,9 @@ import {
 } from "../../components";
 
 const Home = () => {
+  useEffect(() => {
+    document.title = "Home Page";
+  }, []);
   return (
     <>
       <div className="d-flex gap-3 mb-4">
