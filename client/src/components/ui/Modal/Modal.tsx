@@ -10,6 +10,7 @@ interface ModalComponent {
   btnColor?: "btn-primary" | "btn-secondary" | "btn-danger";
   additionalBtnClass?: string;
   iconClass?: "icon" | "";
+  resetHandler?: () => void;
 }
 
 export interface ModalControlsProps {
@@ -31,6 +32,7 @@ const Modal: CustomModalComponent = ({
   btnColor = "btn-secondary",
   additionalBtnClass,
   iconClass = "icon",
+  resetHandler,
 }) => {
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -57,6 +59,7 @@ const Modal: CustomModalComponent = ({
           className={`btn ${btnColor}`}
           data-bs-toggle="modal"
           data-bs-target={`#${areaLabel}`}
+          onClick={resetHandler}
         >
           <div className="d-flex align-items-center">
             <Icon className={`${iconClass}`} />

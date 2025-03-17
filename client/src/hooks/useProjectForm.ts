@@ -92,6 +92,13 @@ export const useProject = () => {
     }
   };
 
+  const resetState = () => {
+    resetName();
+    resetDescription();
+    setStatus(() => "new");
+    resetClientId();
+  };
+
   const { addProject } = useAddProject({ clientId, description, name, status });
 
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
@@ -106,10 +113,7 @@ export const useProject = () => {
 
     addProject({ variables: { name, description, clientId, status } });
 
-    resetName();
-    resetDescription();
-    setStatus(() => "new");
-    resetClientId();
+    resetState();
   };
 
   useEffect(() => {
@@ -139,5 +143,6 @@ export const useProject = () => {
     projectStatusNameData,
     clientsData,
     clientNameData,
+    resetState,
   };
 };

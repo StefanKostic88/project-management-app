@@ -1,14 +1,17 @@
 import { ChangeEvent, useMemo, useState } from "react";
 
 interface InputOptions {
-  isEmail: boolean;
-  errorMsg: string;
+  isEmail?: boolean;
+  errorMsg?: string;
+  initialValue?: string;
 }
 
 export const useInput = (options: InputOptions | null = null) => {
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<string>(
+    options?.initialValue ? options.initialValue : ""
+  );
   const [touched, setTouched] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null | undefined>(null);
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const newValue = e.target.value;
@@ -19,9 +22,7 @@ export const useInput = (options: InputOptions | null = null) => {
       setError(() => (!match ? options && options.errorMsg : null));
     }
 
-    if (!options) {
-      setError(() => (newValue.trim() === "" ? "Invalid format" : null));
-    }
+    setError(() => (newValue.trim() === "" ? "Invalid format" : null));
 
     setValue(() => e.target.value);
   };

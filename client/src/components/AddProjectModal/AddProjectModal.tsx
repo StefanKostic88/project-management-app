@@ -16,6 +16,7 @@ const AddProjectModal = () => {
     optionsData,
     clientsData,
     clientNameData,
+    resetState,
   } = useProject();
 
   const { data, error, loading } = clientsData;
@@ -28,6 +29,7 @@ const AddProjectModal = () => {
         modalTitle="Add Project"
         Icon={FaList}
         btnColor="btn-primary"
+        resetHandler={resetState}
       >
         <form onSubmit={hadnleSubmit}>
           <CustomInput data={projectNameData}>
