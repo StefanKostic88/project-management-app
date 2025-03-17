@@ -7,7 +7,9 @@ interface ModalComponent {
   modalTitle: string;
   areaLabel: string;
   Icon: IconType;
-  btnColor?: "btn-primary" | "btn-secondary";
+  btnColor?: "btn-primary" | "btn-secondary" | "btn-danger";
+  additionalBtnClass?: string;
+  iconClass?: "icon" | "";
 }
 
 const Modal: FC<ModalComponent> = ({
@@ -17,20 +19,24 @@ const Modal: FC<ModalComponent> = ({
   areaLabel,
   Icon,
   btnColor = "btn-secondary",
+  additionalBtnClass,
+  iconClass = "icon",
 }) => {
   return (
     <>
-      <button
-        type="button"
-        className={`btn ${btnColor}`}
-        data-bs-toggle="modal"
-        data-bs-target={`#${areaLabel}`}
-      >
-        <div className="d-flex align-items-center">
-          <Icon className="icon" />
-          <div>{btnTitle}</div>
-        </div>
-      </button>
+      <div className={`d-flex ${additionalBtnClass}`}>
+        <button
+          type="button"
+          className={`btn ${btnColor}`}
+          data-bs-toggle="modal"
+          data-bs-target={`#${areaLabel}`}
+        >
+          <div className="d-flex align-items-center">
+            <Icon className={`${iconClass}`} />
+            <div>{btnTitle}</div>
+          </div>
+        </button>
+      </div>
 
       <div
         className="modal fade"

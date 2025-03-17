@@ -12,7 +12,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <div className="d-flex gap-3 mb-4">
+      <div className="d-flex gap-3 mb-4 mt-5">
         <AddClientModal />
         <AddProjectModal />
       </div>

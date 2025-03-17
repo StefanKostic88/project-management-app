@@ -6,7 +6,7 @@ const ClientInfo: FC = () => {
   const { data } = useProjectCompoundContext();
 
   return (
-    <>
+    <div className="mb-3">
       <h5 className="mt-5">Client Information</h5>
       <ul className="list-group">
         <li className="list-group-item">
@@ -19,7 +19,7 @@ const ClientInfo: FC = () => {
           <FaPhone className="icon" /> {data?.project.client.phone}
         </li>
       </ul>
-    </>
+    </div>
   );
 };
 
