@@ -5,6 +5,7 @@ import {
   FormEvent,
   ReactNode,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import ComponentWraper from "../ui/ComponentWraper/ComponentWraper";
@@ -79,16 +80,21 @@ const optionsData = {
   completed: "Completed",
 };
 
-const EditProjectForm: FC<ProjectInterfaceQuery> = ({ project }) => {
-  const getKeyByValue = (
-    obj: Record<string, string>,
-    value: string
-  ): string | undefined => {
-    return Object.entries(obj).find(([key, val]) => val === value)?.[0];
-  };
+const getKeyByValue = (
+  obj: Record<string, string>,
+  value: string
+): string | undefined => {
+  return Object.entries(obj).find(([key, val]) => val === value)?.[0];
+};
 
-  const xx = getKeyByValue(optionsData, project.status);
-  const [status, setStatus] = useState(xx ? xx : "new");
+const EditProjectForm: FC<ProjectInterfaceQuery> = ({ project }) => {
+  const statusKey = getKeyByValue(optionsData, project.status);
+
+  const [status, setStatus] = useState(statusKey ? statusKey : "new");
+
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [formValid, setFormValid] = useState(false);
+
   const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>): void => {
     setStatus(() => e.target.value);
   };
@@ -99,13 +105,20 @@ const EditProjectForm: FC<ProjectInterfaceQuery> = ({ project }) => {
     handleValueChange: nameHandleValueChange,
     value: nameValue,
     invalidFormat: nameInvalidFormat,
+    generateSubmitError: generateNameError,
   } = useInput({
     initialValue: project.name,
   });
-  const { handleBlur, error, handleValueChange, value, invalidFormat } =
-    useInput({
-      initialValue: project.description,
-    });
+  const {
+    handleBlur,
+    error,
+    handleValueChange,
+    value,
+    invalidFormat,
+    generateSubmitError: generateDescriptionError,
+  } = useInput({
+    initialValue: project.description,
+  });
 
   const projectStatusNameData = {
     value: status,
@@ -127,20 +140,45 @@ const EditProjectForm: FC<ProjectInterfaceQuery> = ({ project }) => {
     value: value,
     error: error,
     handleBlur: handleBlur,
-    label: "Name",
+    label: "Description",
     handleValueChange: handleValueChange,
     invalidFormat: invalidFormat,
   };
 
+  const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+
+    if (!formValid) {
+      setIsDisabled(() => true);
+      generateNameError();
+      generateDescriptionError();
+      return;
+    }
+  };
+
+  useEffect(() => {
+    const isFormValid =
+      !!projectNameDataUpdated.value &&
+      !projectNameDataUpdated.invalidFormat &&
+      !!descriptionNameDataUpdated.value &&
+      !descriptionNameDataUpdated.invalidFormat;
+
+    const invalid =
+      projectNameDataUpdated.invalidFormat ||
+      descriptionNameDataUpdated.invalidFormat;
+    setFormValid(isFormValid);
+    setIsDisabled(invalid);
+  }, [
+    projectNameDataUpdated.invalidFormat,
+    projectNameDataUpdated.value,
+    descriptionNameDataUpdated.value,
+    descriptionNameDataUpdated.invalidFormat,
+  ]);
+
   return (
     <div className="mt-5">
       <h3> Update Project Details</h3>
-      <form
-        onSubmit={(e: FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          console.log(nameValue, descriptionNameDataUpdated.value, status);
-        }}
-      >
+      <form onSubmit={hadnleSubmit}>
         <CustomInput data={projectNameDataUpdated}>
           <CustomInput.Input />
           <CustomInput.Error />
@@ -158,8 +196,7 @@ const EditProjectForm: FC<ProjectInterfaceQuery> = ({ project }) => {
         <button
           className="btn btn-secondary"
           type="submit"
-          // data-bs-dismiss={formValid && "modal"}
-          // disabled={isDisabled}
+          disabled={isDisabled}
         >
           Submit
         </button>

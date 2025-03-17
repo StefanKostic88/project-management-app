@@ -31,6 +31,8 @@ const ClientRow: FC<ClientRowProps> = ({
           btnTitle=""
           modalTitle={`Delete ${name}`}
           key={id}
+          btnColor="btn-danger"
+          iconClass=""
         >
           <Modal.ModalControls
             confirmName="Delete Client"

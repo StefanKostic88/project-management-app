@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useClientForm } from "../../hooks/useClientForm";
 const AddClientModal = () => {
-  const { hadnleSubmit, inputData, isDisabled, formValid } = useClientForm();
+  const { hadnleSubmit, inputData, isDisabled, formValid, reset } = useClientForm();
 
   return (
     <Modal
@@ -13,6 +13,7 @@ const AddClientModal = () => {
       btnTitle="Add Client"
       modalTitle="Add Client"
       Icon={FaUser}
+      resetHandler={reset}
     >
       <form onSubmit={hadnleSubmit}>
         {inputData.map((data, index) => (
