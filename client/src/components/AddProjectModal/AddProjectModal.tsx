@@ -1,4 +1,4 @@
-import { useProject } from "../../hooks/useProjectForm";
+import { useProjectForm } from "../../hooks/useProjectForm";
 import Modal from "../ui/Modal/Modal";
 import CustomInput from "../ui/CustomInput/CustomInput";
 import ComponentWraper from "../ui/ComponentWraper/ComponentWraper";
@@ -17,7 +17,7 @@ const AddProjectModal = () => {
     clientsData,
     clientNameData,
     resetState,
-  } = useProject();
+  } = useProjectForm();
 
   const { data, error, loading } = clientsData;
 

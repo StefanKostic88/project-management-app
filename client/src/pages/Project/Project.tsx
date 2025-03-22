@@ -21,6 +21,7 @@ const Project = () => {
       <ProjectCompound.ProjectDetails />
       <ProjectCompound.ClientInfo />
       <ProjectCompound.DeleteProjectButton />
+      <ProjectCompound.EditProjectForm />
     </ProjectCompound>
   );
 };

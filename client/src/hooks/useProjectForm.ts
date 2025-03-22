@@ -4,15 +4,29 @@ import { InputTypes } from "../components/ui/CustomInput/CustomInput";
 import { useClientGraphQlService } from "./useClientGraphQlService";
 import { useProjectGraphQlService } from "./useProjectGraphQlService";
 
-export const useProject = () => {
+export type ProjectStatus = "new" | "progress" | "completed";
+
+interface EditProjectFormOptions {
+  projectStatus?: ProjectStatus;
+  projectName?: string;
+  projectDescription?: string;
+  projectId?: string;
+}
+
+export const useProjectForm = (
+  editProjectFormOptions?: EditProjectFormOptions,
+  isEditing = false
+) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
-  // const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("new");
+  const [status, setStatus] = useState(
+    editProjectFormOptions?.projectStatus || "new"
+  );
+
   const [clientId, setClientId] = useState("");
 
   const { useGetClients } = useClientGraphQlService();
-  const { useAddProject } = useProjectGraphQlService();
+  const { useAddProject, useUpdateProject } = useProjectGraphQlService();
   const clientsData = useGetClients();
   const clients = clientsData.data?.clients;
 
@@ -23,7 +37,7 @@ export const useProject = () => {
   };
 
   const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>): void => {
-    setStatus(() => e.target.value);
+    setStatus(() => e.target.value as ProjectStatus);
   };
 
   const handleSelectClientId = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -38,7 +52,7 @@ export const useProject = () => {
     invalidFormat: namelInvalidFormat,
     generateSubmitError: generateNameError,
     reset: resetName,
-  } = useInput();
+  } = useInput({ initialValue: editProjectFormOptions?.projectName });
 
   const {
     value: description,
@@ -48,7 +62,7 @@ export const useProject = () => {
     invalidFormat: descriptionlInvalidFormat,
     generateSubmitError: generateDescriptionError,
     reset: resetDescription,
-  } = useInput();
+  } = useInput({ initialValue: editProjectFormOptions?.projectDescription });
 
   const projectNameData = {
     value: name,
@@ -101,6 +115,13 @@ export const useProject = () => {
 
   const { addProject } = useAddProject({ clientId, description, name, status });
 
+  const { updateProject } = useUpdateProject({
+    name,
+    description,
+    status,
+    id: editProjectFormOptions?.projectId,
+  });
+
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
@@ -111,7 +132,16 @@ export const useProject = () => {
       return;
     }
 
-    addProject({ variables: { name, description, clientId, status } });
+    isEditing
+      ? updateProject({
+          variables: {
+            name,
+            description,
+            status,
+            id: editProjectFormOptions?.projectId,
+          },
+        })
+      : addProject({ variables: { name, description, clientId, status } });
 
     resetState();
   };

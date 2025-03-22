@@ -29,10 +29,7 @@ export const useInput = (options: InputOptions | null = null) => {
 
   const handleTextAreaValueChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    if (!options) {
-      setError(() => (newValue.trim() === "" ? "Invalid format" : null));
-    }
-
+    setError(() => (newValue.trim() === "" ? "Invalid format" : null));
     setValue(() => e.target.value);
   };
 
@@ -48,7 +45,7 @@ export const useInput = (options: InputOptions | null = null) => {
   );
 
   const generateSubmitError = (): void => {
-    if (!options && value.trim() === "") {
+    if (!options?.initialValue && value.trim() === "") {
       setError(() => "Invalid format");
       setTouched(() => true);
       return;
