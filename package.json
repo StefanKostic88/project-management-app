@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "cross-env NODE_ENV=production node ./server/build/index.js",
+    "build": "rimraf ./server/build && tsc -p ./server/tsconfig.json",
     "dev": "nodemon"
   },
   "keywords": [],
@@ -24,8 +25,10 @@
     "@types/graphql": "^14.5.0",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.13.10",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   }
