@@ -4,11 +4,23 @@ import { InputTypes } from "../components/ui/CustomInput/CustomInput";
 import { useClientGraphQlService } from "./useClientGraphQlService";
 import { useProjectGraphQlService } from "./useProjectGraphQlService";
 
-export const useProject = () => {
+export type ProjectStatus = "new" | "progress" | "completed";
+
+interface EditProjectFormOptions {
+  projectStatus?: ProjectStatus;
+  projectName?: string;
+  projectDescription?: string;
+}
+
+export const useProjectForm = (
+  editProjectFormOptions?: EditProjectFormOptions
+) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
-  // const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("new");
+  const [status, setStatus] = useState(
+    editProjectFormOptions?.projectStatus || "new"
+  );
+  // const [status, setStatus] = useState("new");
   const [clientId, setClientId] = useState("");
 
   const { useGetClients } = useClientGraphQlService();
@@ -23,7 +35,7 @@ export const useProject = () => {
   };
 
   const handleSelectStatus = (e: ChangeEvent<HTMLSelectElement>): void => {
-    setStatus(() => e.target.value);
+    setStatus(() => e.target.value as ProjectStatus);
   };
 
   const handleSelectClientId = (e: ChangeEvent<HTMLSelectElement>): void => {
@@ -38,7 +50,18 @@ export const useProject = () => {
     invalidFormat: namelInvalidFormat,
     generateSubmitError: generateNameError,
     reset: resetName,
-  } = useInput();
+  } = useInput({ initialValue: editProjectFormOptions?.projectName });
+  // const {
+  //   value: name,
+  //   handleValueChange: handleNameChange,
+  //   error: nameError,
+  //   handleBlur: handleNameBlur,
+  //   invalidFormat: namelInvalidFormat,
+  //   generateSubmitError: generateNameError,
+  //   reset: resetName,
+  // } = useInput();
+
+  // initialValue: project?.name,
 
   const {
     value: description,
@@ -48,7 +71,16 @@ export const useProject = () => {
     invalidFormat: descriptionlInvalidFormat,
     generateSubmitError: generateDescriptionError,
     reset: resetDescription,
-  } = useInput();
+  } = useInput({ initialValue: editProjectFormOptions?.projectDescription });
+  // const {
+  //   value: description,
+  //   handleTextAreaValueChange: handleDescriptionChange,
+  //   error: descriptionError,
+  //   handleBlur: handleDescriptionBlur,
+  //   invalidFormat: descriptionlInvalidFormat,
+  //   generateSubmitError: generateDescriptionError,
+  //   reset: resetDescription,
+  // } = useInput();
 
   const projectNameData = {
     value: name,
@@ -111,7 +143,7 @@ export const useProject = () => {
       return;
     }
 
-    addProject({ variables: { name, description, clientId, status } });
+    // addProject({ variables: { name, description, clientId, status } });
 
     resetState();
   };
