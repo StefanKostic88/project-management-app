@@ -28,11 +28,15 @@ const EditProjectForm: FC = () => {
     projectStatusNameData,
     hadnleSubmit,
     isDisabled,
-  } = useProjectForm({
-    projectName: project?.name,
-    projectDescription: project?.description,
-    projectStatus: statusKey as ProjectStatus,
-  });
+  } = useProjectForm(
+    {
+      projectName: project?.name,
+      projectDescription: project?.description,
+      projectStatus: statusKey as ProjectStatus,
+      projectId: data?.project.id,
+    },
+    true
+  );
 
   return (
     <div className="mt-5">

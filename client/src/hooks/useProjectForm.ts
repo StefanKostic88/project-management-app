@@ -10,21 +10,23 @@ interface EditProjectFormOptions {
   projectStatus?: ProjectStatus;
   projectName?: string;
   projectDescription?: string;
+  projectId?: string;
 }
 
 export const useProjectForm = (
-  editProjectFormOptions?: EditProjectFormOptions
+  editProjectFormOptions?: EditProjectFormOptions,
+  isEditing = false
 ) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formValid, setFormValid] = useState(false);
   const [status, setStatus] = useState(
     editProjectFormOptions?.projectStatus || "new"
   );
-  // const [status, setStatus] = useState("new");
+
   const [clientId, setClientId] = useState("");
 
   const { useGetClients } = useClientGraphQlService();
-  const { useAddProject } = useProjectGraphQlService();
+  const { useAddProject, useUpdateProject } = useProjectGraphQlService();
   const clientsData = useGetClients();
   const clients = clientsData.data?.clients;
 
@@ -51,17 +53,6 @@ export const useProjectForm = (
     generateSubmitError: generateNameError,
     reset: resetName,
   } = useInput({ initialValue: editProjectFormOptions?.projectName });
-  // const {
-  //   value: name,
-  //   handleValueChange: handleNameChange,
-  //   error: nameError,
-  //   handleBlur: handleNameBlur,
-  //   invalidFormat: namelInvalidFormat,
-  //   generateSubmitError: generateNameError,
-  //   reset: resetName,
-  // } = useInput();
-
-  // initialValue: project?.name,
 
   const {
     value: description,
@@ -72,15 +63,6 @@ export const useProjectForm = (
     generateSubmitError: generateDescriptionError,
     reset: resetDescription,
   } = useInput({ initialValue: editProjectFormOptions?.projectDescription });
-  // const {
-  //   value: description,
-  //   handleTextAreaValueChange: handleDescriptionChange,
-  //   error: descriptionError,
-  //   handleBlur: handleDescriptionBlur,
-  //   invalidFormat: descriptionlInvalidFormat,
-  //   generateSubmitError: generateDescriptionError,
-  //   reset: resetDescription,
-  // } = useInput();
 
   const projectNameData = {
     value: name,
@@ -133,6 +115,13 @@ export const useProjectForm = (
 
   const { addProject } = useAddProject({ clientId, description, name, status });
 
+  const { updateProject } = useUpdateProject({
+    name,
+    description,
+    status,
+    id: editProjectFormOptions?.projectId,
+  });
+
   const hadnleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
@@ -143,7 +132,16 @@ export const useProjectForm = (
       return;
     }
 
-    // addProject({ variables: { name, description, clientId, status } });
+    isEditing
+      ? updateProject({
+          variables: {
+            name,
+            description,
+            status,
+            id: editProjectFormOptions?.projectId,
+          },
+        })
+      : addProject({ variables: { name, description, clientId, status } });
 
     resetState();
   };

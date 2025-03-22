@@ -4,7 +4,11 @@ import {
   ProjectInterfaceQuery,
 } from "../components/Projects/Project.model";
 import { GET_PROJECT, GET_PROJECTS } from "../queries/projectQuery";
-import { ADD_PROJECT, DELETE_PROJECT } from "../mutations/projectMutations";
+import {
+  ADD_PROJECT,
+  DELETE_PROJECT,
+  UPDATE_PROJECT,
+} from "../mutations/projectMutations";
 import { useNavigate } from "react-router-dom";
 
 export const useProjectGraphQlService = () => {
@@ -65,5 +69,36 @@ export const useProjectGraphQlService = () => {
     return { data, loading, error };
   };
 
-  return { useGetProjects, useAddProject, useDeleteClient, useGetProject };
+  const useUpdateProject = (options: {
+    name: string;
+    description: string;
+    status: string;
+    id?: string;
+  }) => {
+    const { name, status, description, id } = options;
+    const [updateProject] = useMutation(UPDATE_PROJECT, {
+      variables: {
+        name,
+        description,
+        status,
+        id,
+      },
+      refetchQueries: [
+        {
+          query: GET_PROJECT,
+          variables: { id },
+        },
+      ],
+    });
+
+    return { updateProject };
+  };
+
+  return {
+    useGetProjects,
+    useAddProject,
+    useDeleteClient,
+    useGetProject,
+    useUpdateProject,
+  };
 };
