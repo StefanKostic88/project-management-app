@@ -15,7 +15,7 @@ const ClientRow: FC<ClientRowProps> = ({
   const { deleteClient } = useDeleteClient(id);
 
   const handleOnDeleteClient = () => {
-    console.log(id);
+    // console.log(id);
     deleteClient();
   };
 

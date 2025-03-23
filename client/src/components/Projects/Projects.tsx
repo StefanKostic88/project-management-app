@@ -9,7 +9,13 @@ const Projects = () => {
   return (
     <ComponentWraper error={error} loading={loading}>
       {data && data.projects.length > 0 ? (
-        <div className="row mt-4">
+        <div
+          className="row mt-4"
+          style={{
+            maxHeight: "494px",
+            overflowY: "auto",
+          }}
+        >
           {data.projects.map((project, index) => (
             <ProjectCard key={index} project={project} />
           ))}
